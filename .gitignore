@@ -1,2 +1,5 @@
 .DS_Store
-ofxCUPSExampleDebug.app/*
+
+example/bin/*
+example/ofxCUPSExample.xcodeproj
+example/ofxCUPSExample.xcodeproj/*

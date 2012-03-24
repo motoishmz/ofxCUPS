@@ -62,6 +62,12 @@ void ofxCUPS::printImage(string filename)
 }
 
 
+void ofxCUPS::clearAllJobs()
+{
+    cupsCancelJob2(CUPS_HTTP_DEFAULT, printerName.c_str(), CUPS_JOBID_ALL, 1);
+}
+
+
 void ofxCUPS::updatePrinterInfo()
 {
     cups_dest_t *dests;
@@ -70,46 +76,30 @@ void ofxCUPS::updatePrinterInfo()
     const char *value;
     
     value = cupsGetOption("printer-state", dest->num_options, dest->options);
-//    printf("%s printer-state: %s\n", dest->name, value ? value : "no description");
+    //    printf("%s printer-state: %s\n", dest->name, value ? value : "no description");
     setPrinterState(ofToInt(value));
     
     
     value = cupsGetOption("printer-state-reasons", dest->num_options, dest->options);
-//    printf("%s printer-state-reasons: %s\n", dest->name, value ? value : "(no description)");
+    //    printf("%s printer-state-reasons: %s\n", dest->name, value ? value : "(no description)");
     setPrinterInfo(ofToString(value));
     
     cupsFreeDests(num_dests, dests);
 }
 
 
-void ofxCUPS::clearAllJobs()
-{
-    cupsCancelJob2(CUPS_HTTP_DEFAULT, printerName.c_str(), CUPS_JOBID_ALL, 1);
-}
-
-
 void ofxCUPS::addOption(string optionKey, string optionValue)
 {
-    cups_dest_t *dest;
+    
     cups_dest_t *dests;
     int num_dests = cupsGetDests(&dests);
-    //    cout << "num_dests: " << num_dests << endl;
+    cups_dest_t *dest = cupsGetDest(printerName.c_str(), NULL, num_dests, dests);
     
-    int i;
-    const char *value;
-    for (i=num_dests, dest=dests; i>0; i--, dest++)
-    {
-        
-        if (dest->instance == NULL)
-        {
-            if (dest->name != printerName) 
-                return;
-            
-            int num_options = 0;
-            cups_option_t *options = (cups_option_t *)0;
-            num_options = cupsAddOption(optionKey.c_str(), optionValue.c_str(), num_options, &options);            
-        }
-    }
+    int num_options = 0;
+    cups_option_t *options = (cups_option_t *)0;
+    num_options = cupsAddOption(optionKey.c_str(), optionValue.c_str(), num_options, &options);            
+    
+    cupsFreeDests(num_dests, dests);
 }
 
 

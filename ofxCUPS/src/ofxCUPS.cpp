@@ -64,38 +64,21 @@ void ofxCUPS::printImage(string filename)
 
 void ofxCUPS::updatePrinterInfo()
 {
-    cups_dest_t *dest;
     cups_dest_t *dests;
     int num_dests = cupsGetDests(&dests);
-    //    cout << "num_dests: " << num_dests << endl;
-    
-    int i;
+    cups_dest_t *dest = cupsGetDest(printerName.c_str(), NULL, num_dests, dests);
     const char *value;
-    for (i=num_dests, dest=dests; i>0; i--, dest++)
-    {
-        
-        if (dest->instance == NULL)
-        {
-            if (dest->name != printerName) 
-                return;
-            //            cout << "name: " << dest->name << endl;
-            //            cout << "is_default: " << dest->is_default << endl;
-            //            cout << "num_options: " << dest->num_options << endl;
-            //            cout << "options: " << dest->options << endl;
-            
-            
-            value = cupsGetOption("printer-state", dest->num_options, dest->options);
-            //            printf("%s printer-state: %s\n", dest->name, value ? value : "no description");
-            setPrinterState(ofToInt(value));
-            
-            
-            value = cupsGetOption("printer-state-reasons", dest->num_options, dest->options);
-            //            printf("%s printer-state-reasons: %s\n", dest->name, value ? value : "(no description)");
-            setPrinterInfo(ofToString(value));
-            
-            //            cout << "------------------------" << endl;
-        }
-    }
+    
+    value = cupsGetOption("printer-state", dest->num_options, dest->options);
+//    printf("%s printer-state: %s\n", dest->name, value ? value : "no description");
+    setPrinterState(ofToInt(value));
+    
+    
+    value = cupsGetOption("printer-state-reasons", dest->num_options, dest->options);
+//    printf("%s printer-state-reasons: %s\n", dest->name, value ? value : "(no description)");
+    setPrinterInfo(ofToString(value));
+    
+    cupsFreeDests(num_dests, dests);
 }
 
 

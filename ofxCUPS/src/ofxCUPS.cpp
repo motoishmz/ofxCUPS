@@ -29,16 +29,23 @@ void ofxCUPS::listPrinters()
     cout << "----------------------------------------" << endl;
 }
 
+void ofxCUPS::printImage(string filename) {
+    printImage(filename,false);
+}
 
-void ofxCUPS::printImage(string filename)
-{
-    int num_options = 0;  
+void ofxCUPS::printImage(string filename, bool isAbsolutePath) {
+    int num_options = 0;
     cups_option_t *options = NULL;  
-    
-    string path = "../../../data/";
-    string currentFile = filename;
-    string printFile = path + currentFile;
-    //optionen = "media=DS_PC_size"; //ds40  
+
+    string printFile;
+    if(isAbsolutePath) {
+        printFile = filename;
+    }
+    else {
+        printFile = ofToDataPath("./",true) + filename;
+    }
+
+    //optionen = "media=DS_PC_size"; //ds40
     
     //num_options = cupsParseOptions(optionen.c_str(), num_options, &options);  
     

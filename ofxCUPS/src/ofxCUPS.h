@@ -15,6 +15,8 @@ public:
     
     void listPrinters();
     void printImage(string filename);
+    void printImage(string filename,bool isAbsolutePath);
+
     void updatePrinterInfo();
     void clearAllJobs();
     void checkActiveJobStatus();

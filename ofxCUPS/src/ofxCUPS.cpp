@@ -35,10 +35,10 @@ void ofxCUPS::printImage(string filename)
     int num_options = 0;  
     cups_option_t *options = NULL;  
     
-    string path = "../../../data/";
+    string path = ofFilePath::getAbsolutePath("");
     string currentFile = filename;
     string printFile = path + currentFile;
-    //optionen = "media=DS_PC_size"; //ds40  
+    //optionen = "media=DS_PC_size"; //ds40
     
     //num_options = cupsParseOptions(optionen.c_str(), num_options, &options);  
     
@@ -72,9 +72,14 @@ void ofxCUPS::updatePrinterInfo()
 {
     cups_dest_t *dests;
     int num_dests = cupsGetDests(&dests);
-    cups_dest_t *dest = cupsGetDest(printerName.c_str(), NULL, num_dests, dests);
+    cups_dest_t *dest = NULL;
+    dest = cupsGetDest(printerName.c_str(), NULL, num_dests, dests);
+    if ( dest == NULL)
+    {
+        ofLogError() << "NO PRINTER - PRINTER NAME >> [" << printerName << "]" <<endl;
+        return;
+    }
     const char *value;
-    
     value = cupsGetOption("printer-state", dest->num_options, dest->options);
     //    printf("%s printer-state: %s\n", dest->name, value ? value : "no description");
     setPrinterState(ofToInt(value));

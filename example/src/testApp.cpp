@@ -13,7 +13,7 @@ void testApp::setup()
     printer.listPrinters();
     
     // set printer name which you want to use...
-    printer.setPrinterName("EPSON_E_600");
+    printer.setPrinterName("EVOLIS_Tattoo2");
     
     // print options....... see also http://www.cups.org/documentation.php/doc-1.5/options.html
     // or, set printer default option from http://localhost:631/printers/ 
@@ -97,7 +97,7 @@ void testApp::keyPressed(int key)
     
     if (key == 'p')
     {
-        printer.printImage("testimge.png");
+        printer.printImage("imgres.jpeg");
     }
     if (key == 'a')
     {

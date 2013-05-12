@@ -2,7 +2,8 @@
 
 
 
-#pragma constructor, destructor
+#pragma mark -
+#pragma mark constructor, destructor
 ofxCUPS::ofxCUPS(){}
 ofxCUPS::~ofxCUPS(){}
 ofxCUPS::ofxCUPS(string printerName_)
@@ -11,7 +12,7 @@ ofxCUPS::ofxCUPS(string printerName_)
 }
 
 
-#pragma ................
+#pragma mark -
 void ofxCUPS::listPrinters()
 {
     cout << "---------- installed printers ----------" << endl;
@@ -29,29 +30,30 @@ void ofxCUPS::listPrinters()
     cout << "----------------------------------------" << endl;
 }
 
-void ofxCUPS::printImage(string filename) {
-    printImage(filename,false);
+void ofxCUPS::printImage(string filename)
+{
+    printImage(filename, false);
 }
 
-void ofxCUPS::printImage(string filename, bool isAbsolutePath) {
+void ofxCUPS::printImage(string filename, bool isAbsolutePath)
+{
     int num_options = 0;
     cups_option_t *options = NULL;  
 
     string printFile;
-    if(isAbsolutePath) {
+    if(isAbsolutePath)
+	{
         printFile = filename;
     }
-    else {
-        printFile = ofToDataPath("./",true) + filename;
+    else
+	{
+        printFile = ofToDataPath("./", true) + filename;
     }
 
     //optionen = "media=DS_PC_size"; //ds40
-    
     //num_options = cupsParseOptions(optionen.c_str(), num_options, &options);  
     
-    
-    int last_job_id = cupsPrintFile(
-                                    printerName.c_str(),
+    int last_job_id = cupsPrintFile(printerName.c_str(),
                                     printFile.c_str(),
                                     jobTitle.c_str() ? jobTitle.c_str() : "print from ofxCUPS",
                                     num_options,
@@ -62,8 +64,6 @@ void ofxCUPS::printImage(string filename, bool isAbsolutePath) {
     {
         cout << "print Error: " << cupsLastErrorString() << endl;
     }
-    
-    
     
     cupsFreeOptions(num_options,options);
 }
@@ -77,27 +77,41 @@ void ofxCUPS::clearAllJobs()
 
 void ofxCUPS::updatePrinterInfo()
 {
+    cups_dest_t *dest;
     cups_dest_t *dests;
     int num_dests = cupsGetDests(&dests);
-    cups_dest_t *dest = cupsGetDest(printerName.c_str(), NULL, num_dests, dests);
+    //    cout << "num_dests: " << num_dests << endl;
+    
+    int i;
     const char *value;
-    
-    value = cupsGetOption("printer-state", dest->num_options, dest->options);
-    //    printf("%s printer-state: %s\n", dest->name, value ? value : "no description");
-    setPrinterState(ofToInt(value));
-    
-    
-    value = cupsGetOption("printer-state-reasons", dest->num_options, dest->options);
-    //    printf("%s printer-state-reasons: %s\n", dest->name, value ? value : "(no description)");
-    setPrinterInfo(ofToString(value));
-    
-    cupsFreeDests(num_dests, dests);
+    for (i=num_dests, dest=dests; i>0; i--, dest++)
+    {
+        
+        if (dest->instance == NULL)
+        {
+            if (dest->name != printerName)
+                return;
+            //            cout << "name: " << dest->name << endl;
+            //            cout << "is_default: " << dest->is_default << endl;
+            //            cout << "num_options: " << dest->num_options << endl;
+            //            cout << "options: " << dest->options << endl;
+            
+            
+            value = cupsGetOption("printer-state", dest->num_options, dest->options);
+            setPrinterState(ofToInt(value));
+            
+            
+            value = cupsGetOption("printer-state-reasons", dest->num_options, dest->options);
+            setPrinterInfo(ofToString(value));
+            
+            //            cout << "------------------------" << endl;
+        }
+    }
 }
 
 
 void ofxCUPS::addOption(string optionKey, string optionValue)
 {
-    
     cups_dest_t *dests;
     int num_dests = cupsGetDests(&dests);
     cups_dest_t *dest = cupsGetDest(printerName.c_str(), NULL, num_dests, dests);
@@ -112,15 +126,11 @@ void ofxCUPS::addOption(string optionKey, string optionValue)
 
 void ofxCUPS::checkActiveJobStatus()
 {  
-    
-    //cups_dest_t *dest;  
     cups_job_t *jobs;  
     string info;
     
-    /* Get my jobs (1) with any state (-1) */  
     int num_jobs = cupsGetJobs(&jobs, printerName.c_str(), 0, CUPS_WHICHJOBS_ACTIVE);  
-    cout << "there are " << num_jobs << " active jobs." << endl;
-    
+    cout << num_jobs << " active jobs." << endl;
     
     
     for (int i = 0; i < num_jobs; i ++)
@@ -156,8 +166,10 @@ void ofxCUPS::checkActiveJobStatus()
 }
 
 
-#pragma getter, setter
 
+
+#pragma mark -
+#pragma mark getter, setter
 /**
  *  printerName....
  */

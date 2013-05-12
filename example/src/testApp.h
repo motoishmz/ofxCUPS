@@ -11,8 +11,4 @@ public:
     void update();
     void draw();
     void keyPressed  (int key);
-    
-    // required adding [libcups.2.dylib]
-    ofxCUPS printer;
-    
 };

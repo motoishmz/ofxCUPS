@@ -21,7 +21,7 @@ public:
     void clearAllJobs();
     void checkActiveJobStatus();
     
-    int    getPrinterState();
+    int getPrinterState();
     string getPrinterName();
     string getPrinterInfo();
     void setPrinterName(string newPrinterName);

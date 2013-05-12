@@ -7,11 +7,11 @@ recently this addon supports the functions below:
 - catching errors e.g. low-toner, media tray mepty…
 - adding print options e.g. media size, print quality… 
 
-(have to be more useful)
-
 ## Notes
 - not available for windows.
 - required adding libcups.2.dylib (see Screen Shot 2012-03-05 17.35.48.png)
+
+<img src="https://raw.github.com/motoishmz/ofxCUPS/master/Screen%20Shot%202012-03-05%2017.35.48.png">
 
 ## Installation Instructions
 1. Download and install [gutenprint](http://gimp-print.sourceforge.net/MacOSX.php).

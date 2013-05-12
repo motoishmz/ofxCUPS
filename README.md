@@ -11,7 +11,11 @@ recently this addon supports the functions below:
 - not available for windows.
 - required adding libcups.2.dylib (see Screen Shot 2012-03-05 17.35.48.png)
 
+<<<<<<< HEAD
 <img src="https://raw.github.com/motoishmz/ofxCUPS/master/Screen%20Shot%202012-03-05%2017.35.48.png">
+=======
+[[https://raw.github.com/motoishmz/ofxCUPS/master/Screen%20Shot%202012-03-05%2017.35.48.png]]
+>>>>>>> a2b5f8ab80595933b64d5c8de111e13d22da1b16
 
 ## Installation Instructions
 1. Download and install [gutenprint](http://gimp-print.sourceforge.net/MacOSX.php).

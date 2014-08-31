@@ -100,6 +100,10 @@ void ofxCUPS::clearAllJobs()
 
 void ofxCUPS::updatePrinterInfo()
 {
+    // Clear existing state and info before updating
+    setPrinterState(0);
+    setPrinterInfo("");
+    
     cups_dest_t *dest;
     cups_dest_t *dests;
     int num_dests = cupsGetDests(&dests);

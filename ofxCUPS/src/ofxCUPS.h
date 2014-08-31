@@ -12,8 +12,8 @@ public:
     ofxCUPS(string printerName);
     ~ofxCUPS();
     
-    
     void listPrinters();
+    vector<string> getPrinterList();
     void printImage(string filename);
     void printImage(string filename,bool isAbsolutePath);
 

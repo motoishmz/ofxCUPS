@@ -30,6 +30,29 @@ void ofxCUPS::listPrinters()
     cout << "----------------------------------------" << endl;
 }
 
+vector<string> ofxCUPS::getPrinterList()
+{
+    vector<string> printerList;
+    int i;
+    cups_dest_t *dests, *dest;
+    int num_dests = cupsGetDests(&dests);
+    
+    for (i = num_dests, dest = dests; i > 0; i --, dest ++)
+    {
+        stringstream ss;
+        if (dest->instance) {
+            ss << dest->name << "/" << dest->instance;
+        } else {
+            ss << dest->name;
+        }
+        printerList.push_back(ss.str());
+    }
+    
+    cupsFreeDests(num_dests, dests);
+    
+    return printerList;
+}
+
 void ofxCUPS::printImage(string filename)
 {
     printImage(filename, false);
@@ -99,7 +122,6 @@ void ofxCUPS::updatePrinterInfo()
             
             value = cupsGetOption("printer-state", dest->num_options, dest->options);
             setPrinterState(ofToInt(value));
-            
             
             value = cupsGetOption("printer-state-reasons", dest->num_options, dest->options);
             setPrinterInfo(ofToString(value));

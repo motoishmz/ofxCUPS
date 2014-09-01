@@ -53,6 +53,37 @@ vector<string> ofxCUPS::getPrinterList()
     return printerList;
 }
 
+string ofxCUPS::getDefaultPrinterName()
+{
+    /* This is bad according to CUPS API Reference
+    const char* defaultPrinter = cupsGetDefault();
+    stringstream ss;
+    ss << defaultPrinter;
+    return ss.str();
+     */
+    
+    // Let's use cupsGetDests
+    int i;
+    // Returns an empty string if no default printer found
+    string defaultPrinterName = "";
+    cups_dest_t *dests, *dest;
+    int num_dests = cupsGetDests(&dests);
+    for (i = num_dests, dest = dests; i > 0; i--, dest++) {
+        if (dest->is_default) {
+            stringstream ss;
+            if (dest->instance) {
+                ss << dest->name << "/" << dest->instance;
+            } else {
+                ss << dest->name;
+            }
+            defaultPrinterName = ss.str();
+            break;
+        }
+    }
+    
+    return defaultPrinterName;
+}
+
 void ofxCUPS::printImage(string filename)
 {
     printImage(filename, false);

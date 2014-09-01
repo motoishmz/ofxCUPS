@@ -14,6 +14,7 @@ public:
     
     void listPrinters();
     vector<string> getPrinterList();
+    string getDefaultPrinterName();
     void printImage(string filename);
     void printImage(string filename,bool isAbsolutePath);
 

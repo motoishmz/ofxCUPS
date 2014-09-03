@@ -1,11 +1,64 @@
+# Some general ignore patterns
+build/
+obj/
+*.o
+Debug*/
+Release*/
+*.mode*
+*.app/
+*.pyc
+.svn/
+ 
+ 
+#XCode
+*.pbxuser
+*.perspective
+*.perspectivev3
+*.mode1v3
+*.mode2v3
+#XCode 4
+xcuserdata
+*.xcworkspace
+ 
+#Code::Blocks
+*.depend
+*.layout
+ 
+#Visual Studio
+*.sdf
+*.opensdf
+*.suo
+ipch/
+ 
+#Eclipse
+.metadata
+local.properties
+.externalToolBuilders
+ 
+ 
+# OS-specific ignore patterns
+ 
+#Linux
+*~
+# KDE
+.directory
+ 
+#OSX
 .DS_Store
-
-# Ignore everything in example/bin except test-image.png
-example/bin/*
-!example/bin/data
-example/bin/data/*
-!example/bin/data/test-image.png
-
-example/ofxCUPSExample.xcodeproj
-example/ofxCUPSExample.xcodeproj/*
-example/ofxCUPSExample.xcodeproj/project.xcworkspace/xcuserdata/motoishmz.xcuserdatad/UserInterfaceState.xcuserstate
+*.swp
+*~.nib
+# Thumbnails
+._*
+ 
+#Windows
+# Windows image file caches
+Thumbs.db
+# Folder config file
+Desktop.ini
+ 
+#Android
+.csettings
+/libs/openFrameworksCompiled/project/android/paths.make
+ 
+# Miscellaneous
+.mailmap

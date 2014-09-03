@@ -30,6 +30,60 @@ void ofxCUPS::listPrinters()
     cout << "----------------------------------------" << endl;
 }
 
+vector<string> ofxCUPS::getPrinterList()
+{
+    vector<string> printerList;
+    int i;
+    cups_dest_t *dests, *dest;
+    int num_dests = cupsGetDests(&dests);
+    
+    for (i = num_dests, dest = dests; i > 0; i --, dest ++)
+    {
+        stringstream ss;
+        if (dest->instance) {
+            ss << dest->name << "/" << dest->instance;
+        } else {
+            ss << dest->name;
+        }
+        printerList.push_back(ss.str());
+    }
+    
+    cupsFreeDests(num_dests, dests);
+    
+    return printerList;
+}
+
+string ofxCUPS::getDefaultPrinterName()
+{
+    /* This is bad according to CUPS API Reference
+    const char* defaultPrinter = cupsGetDefault();
+    stringstream ss;
+    ss << defaultPrinter;
+    return ss.str();
+     */
+    
+    // Let's use cupsGetDests
+    int i;
+    // Returns an empty string if no default printer found
+    string defaultPrinterName = "";
+    cups_dest_t *dests, *dest;
+    int num_dests = cupsGetDests(&dests);
+    for (i = num_dests, dest = dests; i > 0; i--, dest++) {
+        if (dest->is_default) {
+            stringstream ss;
+            if (dest->instance) {
+                ss << dest->name << "/" << dest->instance;
+            } else {
+                ss << dest->name;
+            }
+            defaultPrinterName = ss.str();
+            break;
+        }
+    }
+    
+    return defaultPrinterName;
+}
+
 void ofxCUPS::printImage(string filename)
 {
     printImage(filename, false);
@@ -77,6 +131,10 @@ void ofxCUPS::clearAllJobs()
 
 void ofxCUPS::updatePrinterInfo()
 {
+    // Clear existing state and info before updating
+    setPrinterState(0);
+    setPrinterInfo("");
+    
     cups_dest_t *dest;
     cups_dest_t *dests;
     int num_dests = cupsGetDests(&dests);
@@ -99,7 +157,6 @@ void ofxCUPS::updatePrinterInfo()
             
             value = cupsGetOption("printer-state", dest->num_options, dest->options);
             setPrinterState(ofToInt(value));
-            
             
             value = cupsGetOption("printer-state-reasons", dest->num_options, dest->options);
             setPrinterInfo(ofToString(value));

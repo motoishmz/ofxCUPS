@@ -13,10 +13,23 @@ void testApp::setup()
     
     
     // listing up installed printer drivers...
-    printer.listPrinters();
+    //printer.listPrinters();
+    
+    // Another way of getting printer list
+    vector<string> printerList = printer.getPrinterList();
+    int i;
+    cout << "--- Printer List" << endl;
+    for (i = 0; i < printerList.size(); i++) {
+        cout << printerList[i] << endl;
+    }
+    cout << "--- End Printer List" << endl;
+    
+    // Get default printer
+    string defaultPrinterName = printer.getDefaultPrinterName();
+    cout << "Default Printer: " << defaultPrinterName << endl;
     
     // set printer name which you want to use...
-    printer.setPrinterName("ENTER_YOUR_PRINTER_NAME_HERE");
+    printer.setPrinterName(defaultPrinterName);
     
     // set print options....... see also http://www.cups.org/documentation.php/doc-1.5/options.html
     // or, set printer default option from http://localhost:631/printers/

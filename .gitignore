@@ -1,6 +1,11 @@
 .DS_Store
 
+# Ignore everything in example/bin except test-image.png
 example/bin/*
+!example/bin/data
+example/bin/data/*
+!example/bin/data/test-image.png
+
 example/ofxCUPSExample.xcodeproj
 example/ofxCUPSExample.xcodeproj/*
 example/ofxCUPSExample.xcodeproj/project.xcworkspace/xcuserdata/motoishmz.xcuserdatad/UserInterfaceState.xcuserstate

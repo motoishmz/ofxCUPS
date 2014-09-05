@@ -4,12 +4,25 @@
 
 #pragma mark -
 #pragma mark constructor, destructor
-ofxCUPS::ofxCUPS(){}
-ofxCUPS::~ofxCUPS(){}
+ofxCUPS::ofxCUPS()
+{
+    // Initialize options array
+    num_options = 0;
+    options     = (cups_option_t *)0;
+}
+
 ofxCUPS::ofxCUPS(string printerName_)
 {
+    ofxCUPS(); // Run the default constructor to initialize variables
     setPrinterName(printerName_);
 }
+
+ofxCUPS::~ofxCUPS()
+{
+    // Free CUPS options array
+    cupsFreeOptions(num_options, options);
+}
+
 
 
 #pragma mark -
@@ -91,37 +104,85 @@ void ofxCUPS::printImage(string filename)
 
 void ofxCUPS::printImage(string filename, bool isAbsolutePath)
 {
-    int num_options = 0;
-    cups_option_t *options = NULL;  
-
     string printFile;
-    if(isAbsolutePath)
-	{
+    if(isAbsolutePath) {
         printFile = filename;
-    }
-    else
-	{
+    } else {
         printFile = ofToDataPath("./", true) + filename;
     }
-
-    //optionen = "media=DS_PC_size"; //ds40
-    //num_options = cupsParseOptions(optionen.c_str(), num_options, &options);  
+    
+    /*
+     So here we go again with a better explanation of what exactly cupsPrintFile does.
+     http://www.cups.org/doc-1.1/spm.html#cupsPrintFile
+     
+     Argument           Description
+     ---                ---
+     printer            The printer or class to print to.
+     filename           The file to print.
+     title              The job title.
+     num_options        The number of options in the options array.
+     options            A pointer to the options array.
+     */
     
     int last_job_id = cupsPrintFile(printerName.c_str(),
                                     printFile.c_str(),
                                     jobTitle.c_str() ? jobTitle.c_str() : "print from ofxCUPS",
-                                    num_options,
-                                    options);  
+                                    num_options, // out class instance variable
+                                    options); // our instance variable again
     
     cout << "the job id is: " << last_job_id << endl;
-    if (last_job_id == 0)
-    {
+    if (last_job_id == 0) {
         cout << "print Error: " << cupsLastErrorString() << endl;
     }
-    
-    cupsFreeOptions(num_options,options);
 }
 
+void ofxCUPS::printImageWithDefaultOptions(string filename)
+{
+    printImageWithDefaultOptions(filename, false);
+}
+
+void ofxCUPS::printImageWithDefaultOptions(string filename, bool isAbsolutePath)
+{
+    string printFile;
+    if(isAbsolutePath) {
+        printFile = filename;
+    } else {
+        printFile = ofToDataPath("./", true) + filename;
+    }
+    
+    // There has to be a much clever solution. Later. TODO!
+    int i, jobid;
+    cups_dest_t *dests, *dest;
+    int num_dests = cupsGetDests(&dests);
+    // Find our printer!
+    for (i = num_dests, dest = dests; i > 0; i--, dest++) {
+        // Create a printer name that we can compare to the one we have saved
+        stringstream ss;
+        if (dest->instance) {
+            ss << dest->name << "/" << dest->instance;
+        } else {
+            ss << dest->name;
+        }
+        
+        if (ss.str() == printerName) {
+            // We found our printer! Print it!
+            jobid = cupsPrintFile(dest->name,
+                                  printFile.c_str(),
+                                  jobTitle.c_str() ? jobTitle.c_str() : "print from ofxCUPS",
+                                  dest->num_options,
+                                  dest->options);
+            
+            cout << "the job id is: " << jobid << endl;
+            if (jobid == 0) {
+                cout << "print Error: " << cupsLastErrorString() << endl;
+            }
+
+            break; // Break the for loop
+        }
+    }
+    
+    cupsFreeDests(num_dests, dests);
+}
 
 void ofxCUPS::clearAllJobs()
 {
@@ -169,15 +230,33 @@ void ofxCUPS::updatePrinterInfo()
 
 void ofxCUPS::addOption(string optionKey, string optionValue)
 {
-    cups_dest_t *dests;
-    int num_dests = cupsGetDests(&dests);
-    cups_dest_t *dest = cupsGetDest(printerName.c_str(), NULL, num_dests, dests);
+    /*
+     Ok, here we need a more clear explanation of what the cupsAddOption() method does.
+     Found good explanation here: http://www.cups.org/doc-1.1/spm.html#cupsAddOption
+     
+     Argument           Description
+     ---                ---
+     name               The name of the option.
+     value              The value of the option.
+     num_options        Number of options currently in the array.
+     options            Pointer to the options array.
+     
+     That means that we need to store num_options and options as instance variables
+     of this class. We init them in the constructor.
+     */
     
-    int num_options = 0;
-    cups_option_t *options = (cups_option_t *)0;
-    num_options = cupsAddOption(optionKey.c_str(), optionValue.c_str(), num_options, &options);            
+    // Here we just operate on the ofxCUPS instance variables.
+    // First attempt to set options is going to create new options array,
+    // every following addOption() call will add or replace an option.
+    num_options = cupsAddOption(optionKey.c_str(), optionValue.c_str(), num_options, &options);
     
-    cupsFreeDests(num_dests, dests);
+    // This option array has to be added as argument to the cupsPrintFile() method
+    // in the printImage() method of ofxCUPS.
+}
+
+void ofxCUPS::parseOptions(string optionString)
+{
+    num_options = cupsParseOptions(optionString.c_str(), num_options, &options);
 }
 
 

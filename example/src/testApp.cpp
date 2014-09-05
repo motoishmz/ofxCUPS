@@ -33,12 +33,15 @@ void testApp::setup()
     
     // set print options....... see also http://www.cups.org/documentation.php/doc-1.5/options.html
     // or, set printer default option from http://localhost:631/printers/
-    printer.addOption("media", "KG.Maximum");
-//    printer.addOption("resolution", "300dpi"); // one particularly useful option to know about.
+    printer.addOption("media", "A4");
+    printer.addOption("resolution", "300dpi"); // one particularly useful option to know about.
+    
+    // You can also use parseOptions to set printer options as with a command line interface
+    // http://www.cups.org/documentation.php/options.html
+    printer.parseOptions("fit-to-page media=A4,Tray1");
         
     // if necessary.......
     printer.setJobTitle("ofxCUPS Test");
-    
 }
 
 

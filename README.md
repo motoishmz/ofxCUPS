@@ -1,7 +1,5 @@
 # ofxCUPS
-a simple wrapper of CUPS API to manipulate your printer from oF.
-
-recently this addon supports the functions below:
+ofxCUPS is a wrapper of CUPS API to manipulate your printer from oF.
 
 - printing direct from oF
 - catching errors e.g. low-toner, media tray mepty…
